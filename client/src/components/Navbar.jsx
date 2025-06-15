@@ -4,6 +4,7 @@ import { assets } from '../assets/assets.js';
 import { useClerk,useUser ,UserButton} from '@clerk/clerk-react';
 // import { useState } from 'react';
 import { SignOutButton } from "@clerk/clerk-react";
+import { useAppContext } from  '../context/AppContext.jsx';
 
 const BookIcon = ()=>(
     <svg className="w-4 h-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
@@ -22,9 +23,10 @@ const Navbar = () => {
     
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const navigate = useNavigate();
+   
     const location = useLocation();
-    const { user, isSignedIn } = useUser();
+    const {isSignedIn } = useUser();
+    const { navigate,user,setShowHotelReg,isOwner } = useAppContext(); 
 
     
 const [showDropdown, setShowDropdown] = useState(false);
@@ -69,9 +71,11 @@ const [showDropdown, setShowDropdown] = useState(false);
                             <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                         </a>
                     ))}
-                    <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
-                        Dashboard
-                    </button>
+                    {user && (
+                        <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`} onClick={() => isOwner ? navigate('/owner') : setShowHotelReg(true)}>
+                          {isOwner ? 'Dashboard' : 'List Your Hotel'}
+                        </button>
+                    )}
                 </div>
 
                 {/* Desktop Right */}
