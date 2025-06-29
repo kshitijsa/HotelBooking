@@ -18,22 +18,22 @@
 //   const {showHotelReg} = useAppContext();
 
 //   import { useAuth } from '@clerk/clerk-react';
-// import { useEffect } from 'react';
+//   import { useEffect } from 'react';
 
-// const LogToken = () => {
-//   const { getToken } = useAuth();
+//   const LogToken = () => {
+//     const { getToken } = useAuth();
 
-//   useEffect(() => {
-//     (async () => {
-//       const token = await getToken();
-//       console.log('Clerk Token:', token); // Copy this token from your browser console
-//     })();
-//   }, []);
+//     useEffect(() => {
+//       (async () => {
+//         const token = await getToken();
+//         console.log('Clerk Token:', token); // Copy this token from your browser console
+//       })();
+//     }, []);
 
-//   return null;
-// };
+//     return null;
+//   };
 
-// // export default LogToken;
+//   // export default LogToken;
 
 //   return (
 //     <>
@@ -63,9 +63,8 @@
 // export default App
 
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLocation, Route, Routes } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
 import { useAppContext } from './context/AppContext';
 import { Toaster } from 'react-hot-toast';
 
@@ -83,15 +82,12 @@ import ListRoom from './pages/hotelOwner/ListRoom';
 
 function App() {
   const isOwnerPath = useLocation().pathname.includes('owner');
-  const { showHotelReg } = useAppContext();
-  const { getToken } = useAuth();
+  const { showHotelReg, getToken } = useAppContext();
 
-  useEffect(() => {
-    (async () => {
-      const token = await getToken();
-      console.log('Clerk Token:', token); // ← Use this token in Postman
-    })();
-  }, []);
+  // Example: How to get the JWT token from your context
+  // You can use this token in API calls or for debugging
+  // const token = getToken();
+  // console.log('JWT Token:', token);
 
   return (
     <>

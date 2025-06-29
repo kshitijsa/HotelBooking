@@ -4,7 +4,7 @@ const hotelSchema = new mongoose.Schema({
     address:{type:String,required:true},
     contact:{type:String,required:true},
     owner:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:String, // changed from mongoose.Schema.Types.ObjectId
         ref:'User',
         required:true
     },
