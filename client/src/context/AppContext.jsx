@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {useUser,useAuth} from '@clerk/clerk-react'
 import { createContext } from 'react';
 import {toast} from 'react-hot-toast';
-axios.defaults.baseURL = import .meta.env.VITE_API_URL;
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 const AppContext = createContext();
 
 
@@ -20,8 +20,8 @@ export const AppProvider = ({children}) => {
 
     const fetchUser = async () => {
         try{
-            const {data} = await axios.get('/api/user',{headers:{Authorization:`Bearer ${await getToken()}`}});
-            if(data.succese){
+            const {data} = await axios.get('/api/users',{headers:{Authorization:`Bearer ${await getToken()}`}});
+            if(data.success){
                 setIsOwner(data.role === 'hotelOwner');
                 setSearchedCities(data.recentSearchedCities);
             }
