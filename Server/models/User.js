@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
-    _id: {
-        type: String,
-        required: true,
-    },
-    usename: {
+    // _id: {
+    //     type: String,
+    //     required: true,
+    // },
+    username: {
         type: String,
         required: true,
     },
@@ -13,14 +13,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    password: { // <-- Add this field
+    password: { 
         type: String,
         required: true,
     },
     image: {
         type: String,
-        required: false, // <-- change here
-        default: '',     // <-- or provide a default URL if you want
+        required: false, 
+        default: '',     
     },
     role: {
         type: String,
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     recentSearchedCities: [{
         type: String,
-        required: false, // <-- change here
+        required: false, 
     }],
 }, { timestamps: true });
 const User = mongoose.model('User', userSchema);

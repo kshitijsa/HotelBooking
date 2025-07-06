@@ -9,17 +9,17 @@ export const signup = async (req, res) => {
     if (existing) return res.status(400).json({ message: 'User already exists' });
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({
-      _id: email, // use email as _id for compatibility with your schema
-      usename: name,
+      // _id: email, 
+      username: name,
       email,
       password: hashed,
-      image: '', // set default or handle in frontend
+      image: '', 
       role: role || 'user',
       recentSearchedCities: [],
     });
     res.status(201).json({ message: 'User created' });
   } catch (err) {
-    console.error('Signup error:', err); // Log error for debugging
+    console.error('Signup error:', err); 
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -45,7 +45,7 @@ export const login = async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.usename,
+        username: user.username,
         email: user.email,
         role: user.role,
         image: user.image,
@@ -53,7 +53,9 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
-  console.log(err.response);
-  setError(err.response?.data?.message || 'Login failed');
+  // console.log(err.response);
+  // setError(err.response?.data?.message || 'Login failed');
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Login failed' });
 }
 };
