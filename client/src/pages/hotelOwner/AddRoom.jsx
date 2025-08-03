@@ -7,11 +7,11 @@ import { compressImage } from '../../utils/imageCompressor'
 
 const AddRoom = () => {
     const { axios, getToken } = useAppContext();
-    const [images,setImages] = useState({
-        1:null,
-        2:null,
-        3:null,
-        4:null
+    const [images, setImages] = useState({
+        1: { original: null, preview: null },
+        2: { original: null, preview: null },
+        3: { original: null, preview: null },
+        4: { original: null, preview: null }
     })
     const [inputs ,setInputs] = useState({
         roomType:'',
@@ -29,18 +29,24 @@ const AddRoom = () => {
         if (!file) return;
         setLoading(true);
         try {
-            // Compress to 100x100px
+            // Only for preview
             const compressed = await compressImage(file, 0.2, 100);
-            setImages(prev => ({ ...prev, [key]: compressed }));
+            setImages(prev => ({
+                ...prev,
+                [key]: { original: file, preview: compressed }
+            }));
         } catch (err) {
-            setImages(prev => ({ ...prev, [key]: file }));
+            setImages(prev => ({
+                ...prev,
+                [key]: { original: file, preview: null }
+            }));
         } finally {
             setLoading(false);
         }
     };
     const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (!inputs.roomType || !inputs.pricePerNight || !inputs.amenities || Object.values(images).some(image => image === null)) {
+    if (!inputs.roomType || !inputs.pricePerNight || !inputs.amenities || Object.values(images).some(image => !image.original)) {
         alert('Please fill all fields');
         return;
     }
@@ -51,8 +57,8 @@ const AddRoom = () => {
       formData.append('pricePerNight', inputs.pricePerNight);
       formData.append('amenities', JSON.stringify(Object.keys(inputs.amenities).filter(amenity => inputs.amenities[amenity])));
       for (const key of Object.keys(images)) {
-        if (images[key]) {
-          formData.append('images', images[key]);
+        if (images[key].original) {
+          formData.append('images', images[key].original);
         }
       }
       const getToken = () => localStorage.getItem('token');
@@ -72,10 +78,10 @@ const AddRoom = () => {
           }
         });
         setImages({
-          1:null,
-          2:null,
-          3:null,
-          4:null
+          1: { original: null, preview: null },
+          2: { original: null, preview: null },
+          3: { original: null, preview: null },
+          4: { original: null, preview: null }
         });
       }
       else{
@@ -95,7 +101,7 @@ const AddRoom = () => {
       <div className='grid grid-cols-2 sm:flex gap-4 my-2 flex-wrap'>
         {Object.keys(images).map((key) => (
             <label htmlFor={`roomImages${key}`} key={key}>
-                <img src={images[key] ? URL.createObjectURL(images[key]):assets.uploadArea} alt="" />
+                <img src={images[key].preview ? URL.createObjectURL(images[key].preview) : assets.uploadArea} alt="" />
                 <input type="file" accept='image/*' id={`roomImages${key}`} hidden onChange={e=>handleImageChange(e, key)} />
             </label>
         ))}

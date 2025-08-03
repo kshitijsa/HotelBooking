@@ -18,28 +18,29 @@ export const getUserData = async (req,res)=>{
 
 // store User Recent Searched cities
 export const storeRecentSearchedCities = async (req,res)=>{
-    try{
-        const {recentSearchedCities} = req.body;
-        const user = await req.user;
+    try {
+        // The frontend sends recentSearchedCity (single string)
+        const { recentSearchedCity } = req.body;
+        const user = req.user;
 
-        if(user.recentSearchedCities.length >= 5){
-            user.recentSearchedCities.push(recentSearchedCities); // remove the oldest city if more than 5
-        }
-        else{
-            user.recentSearchedCities.shift();
-            user.recentSearchedCities.push(recentSearchedCities);        
+        // Remove duplicate if already present
+        user.recentSearchedCities = user.recentSearchedCities.filter(city => city !== recentSearchedCity);
+        // Add new city to end
+        user.recentSearchedCities.push(recentSearchedCity);
+        // Keep only last 5
+        if (user.recentSearchedCities.length > 5) {
+            user.recentSearchedCities = user.recentSearchedCities.slice(-5);
         }
         await user.save();
         res.json({
-            success:true,
-            message:"Recent Searched Cities Updated",
-            recentSearchedCities:user.recentSearchedCities
+            success: true,
+            message: "Recent Searched Cities Updated",
+            recentSearchedCities: user.recentSearchedCities
         });
-    }
-    catch(error){
+    } catch (error) {
         res.json({
-            success:false,
-            message:error.message
+            success: false,
+            message: error.message
         });
     }
 }

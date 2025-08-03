@@ -1,21 +1,52 @@
-import React from 'react'
+import {useState} from 'react'
 import { assets, cities } from '../assets/assets'
+import { useAppContext } from '../context/AppContext';
 
 const Hero = () => {
+    const {navigate, currency,getToken,axios, setSearchedCities} = useAppContext();
+    const [destination, setDestination] = useState("");
+
+    const onSearch = async (e) => {
+        e.preventDefault();
+        navigate(`/room?destination=${destination}`);
+        try {
+            // Call API to save recent searched city
+            const { data } = await axios.post('/api/users/store-recent-search', { recentSearchedCity: destination }, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`
+                }
+            });
+            // If backend returns updated recentSearchedCities, use it
+            if (data && data.recentSearchedCities) {
+                setSearchedCities(data.recentSearchedCities);
+            } else {
+                // Fallback: update locally
+                setSearchedCities((prev) => {
+                    const newCity = [...prev, destination];
+                    if (newCity.length > 5) {
+                        newCity.shift();
+                    }
+                    return newCity;
+                });
+            }
+        } catch (error) {
+            console.error('Error updating recent searched city:', error);
+        }
+    }
   return (
     <div className='flex flex-col items-start justify-center px-6 md:px-16 lg:px-24 xl:px-32 text-white bg-[url("/src/assets/heroImage.png")] bg-no-repeat bg-cover bg-center h-screen'>
         <p className='bg-[#49B9FF]/50 px-3.5 py-1 rounded-full mt-20' >The Unlimate Hotel Experience</p>
         <h1 className='font-playfair text-2xl md:text-5xl md:text-[56px] md:leading-[56px] font-bold md:font-extrabold max-w-xl mt-4' >Discover Your Perfect Gateway Destination</h1>
         <p className='max-w-130 mt-2 text-sm md:text-base'>Unparalled luxury and comfort await at the world's most exclusive hotels and resorts.start your journey today.</p>
 
-        <form className='bg-white text-gray-500 rounded-lg px-6 py-4 mt-8 flex flex-col md:flex-row max-md:items-start gap-4 max-md:mx-auto'>
+        <form onSubmit={onSearch} className='bg-white text-gray-500 rounded-lg px-6 py-4 mt-8 flex flex-col md:flex-row max-md:items-start gap-4 max-md:mx-auto'>
 
             <div>
                 <div className='flex items-center gap-2'>
                     <img src={assets.calenderIcon} alt="calender" className='h-4'/>
                     <label htmlFor="destinationInput">Destination</label>
                 </div>
-                <input list='destinations' id="destinationInput" type="text" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" placeholder="Type here" required />
+                <input onChange={e => setDestination(e.target.value)} value={destination} list='destinations' id="destinationInput" type="text" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" placeholder="Type here" required />
                 <datalist id='destinations'>
                     {cities.map((city, index) => (
                         <option key={index} value={city} />
